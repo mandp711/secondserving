@@ -1,15 +1,10 @@
 """Search for restaurants near the user's location.
 
-Tries Pinecone + OpenRouter first. Falls back to the local CSV
-(ml/data/santa_barbara_restaurants_with_peak_day.csv) when API keys
-are missing or the external call fails.
+Queries Supabase san_diego_restaurants and filters by distance.
 """
 
-import csv
 import logging
-import os
 from math import radians, cos, sin, asin, sqrt
-from pathlib import Path
 from typing import Any
 
 import httpx
@@ -24,10 +19,6 @@ router = APIRouter()
 settings = get_settings()
 
 GEOCODE_URL = "https://maps.googleapis.com/maps/api/geocode/json"
-INDEX_NAME = "food-rescue-menus"
-
-_CSV_WITH_PEAK = Path(__file__).resolve().parents[4] / "ml" / "data" / "santa_barbara_restaurants_with_peak_day.csv"
-_CSV_BASE = Path(__file__).resolve().parents[4] / "ml" / "data" / "santa_barbara_restaurants.csv"
 
 
 class SearchRequest(BaseModel):
@@ -59,42 +50,49 @@ def _haversine(lat1: float, lng1: float, lat2: float, lng2: float) -> float:
     return 3956 * 2 * asin(sqrt(a))
 
 
-def _search_csv(user_lat: float, user_lng: float, radius_miles: float) -> list[dict[str, Any]]:
-    """Load restaurants from CSV and filter by distance."""
-    csv_path = _CSV_WITH_PEAK if _CSV_WITH_PEAK.exists() else _CSV_BASE
-    if not csv_path.exists():
+def _search_supabase(user_lat: float, user_lng: float, radius_miles: float) -> list[dict[str, Any]]:
+    sb_url = settings.NEXT_PUBLIC_SUPABASE_URL
+    sb_key = settings.NEXT_PUBLIC_SUPABASE_ANON_KEY
+    if not sb_url or not sb_key:
         return []
+
+    url = f"{sb_url}/rest/v1/san_diego_restaurants?select=*"
+    headers = {
+        "apikey": sb_key,
+        "Authorization": f"Bearer {sb_key}",
+    }
+
+    with httpx.Client(timeout=15) as client:
+        resp = client.get(url, headers=headers)
+        resp.raise_for_status()
+        rows = resp.json()
+
     restaurants: list[dict[str, Any]] = []
-    with open(csv_path, newline="", encoding="utf-8") as f:
-        for row in csv.DictReader(f):
-            try:
-                rlat = float(row.get("lat", 0))
-                rlng = float(row.get("lng", 0))
-            except (ValueError, TypeError):
-                continue
-            dist = _haversine(user_lat, user_lng, rlat, rlng)
-            if dist > radius_miles:
-                continue
-            hours_str = row.get("hours_of_operation", "")
-            hours_list = [h.strip() for h in hours_str.split("|")] if hours_str else []
-            r: dict[str, Any] = {
-                "restaurant_name": row.get("restaurant_name", "Unknown"),
-                "address": row.get("address", ""),
-                "lat": rlat,
-                "lng": rlng,
-                "rating": float(row.get("rating", 0) or 0),
-                "closing_time": row.get("closing_time", "Unknown"),
-                "hours_of_operation": hours_list,
-                "distance_miles": round(dist, 2),
-            }
-            if row.get("peak_surplus_day"):
-                r["peak_surplus_day"] = row["peak_surplus_day"]
-            if row.get("peak_surplus_kg"):
-                try:
-                    r["peak_surplus_kg"] = float(row["peak_surplus_kg"])
-                except (ValueError, TypeError):
-                    pass
-            restaurants.append(r)
+    for row in rows:
+        try:
+            rlat = float(row.get("lat") or 0)
+            rlng = float(row.get("lng") or 0)
+        except (ValueError, TypeError):
+            continue
+        dist = _haversine(user_lat, user_lng, rlat, rlng)
+        if dist > radius_miles:
+            continue
+        hours_raw = row.get("hours_of_operation", "") or ""
+        hours_list = [h.strip() for h in hours_raw.split("|")] if hours_raw else []
+        menu_raw = row.get("menu_items", "") or ""
+        menu_list = [m.strip() for m in menu_raw.split(",") if m.strip()]
+        restaurants.append({
+            "restaurant_name": row.get("name", "Unknown"),
+            "address": row.get("address", ""),
+            "lat": rlat,
+            "lng": rlng,
+            "rating": float(row.get("rating") or 0),
+            "closing_time": row.get("closing_time", "Unknown"),
+            "hours_of_operation": hours_list,
+            "menu_items": menu_list,
+            "distance_miles": round(dist, 2),
+        })
+
     seen: set[str] = set()
     unique: list[dict[str, Any]] = []
     for r in restaurants:
@@ -116,96 +114,11 @@ async def search_nearby(req: SearchRequest):
     else:
         raise HTTPException(400, "Provide either an address or lat/lng.")
 
-    pinecone_key = settings.PINECONE_API_KEY or os.getenv("PINECONE_API_KEY", "")
-    openrouter_key = settings.OPENROUTER_API_KEY or os.getenv("OPENROUTER_API_KEY", "")
-
-    restaurants: list[dict[str, Any]] = []
-
-    if pinecone_key and openrouter_key:
-        try:
-            from openai import OpenAI
-            from pinecone import Pinecone
-
-            oai = OpenAI(api_key=openrouter_key, base_url=settings.OPENROUTER_BASE_URL)
-            pc = Pinecone(api_key=pinecone_key)
-            index = pc.Index(INDEX_NAME)
-
-            embedding = oai.embeddings.create(
-                input=[req.query], model="google/gemini-embedding-001", dimensions=768
-            )
-            query_vec = embedding.data[0].embedding
-
-            radius_km = req.radius_miles * 1.60934
-            delta = radius_km / 111.0
-
-            results = index.query(
-                vector=query_vec,
-                top_k=200,
-                filter={
-                    "$and": [
-                        {"lat": {"$gte": user_lat - delta}},
-                        {"lat": {"$lte": user_lat + delta}},
-                        {"lng": {"$gte": user_lng - delta}},
-                        {"lng": {"$lte": user_lng + delta}},
-                    ]
-                },
-                include_metadata=True,
-                namespace="san_diego",
-            )
-
-            peak_lookup: dict[str, dict[str, Any]] = {}
-            if _CSV_WITH_PEAK.exists():
-                with open(_CSV_WITH_PEAK, newline="", encoding="utf-8") as f:
-                    for row in csv.DictReader(f):
-                        rid = row.get("id", "").strip()
-                        if rid:
-                            peak_lookup[rid] = {
-                                "peak_surplus_day": row.get("peak_surplus_day", ""),
-                                "peak_surplus_kg": row.get("peak_surplus_kg", ""),
-                            }
-
-            seen: set[str] = set()
-            for match in results.matches:
-                md = match.metadata or {}
-                rlat = float(md.get("lat", 0))
-                rlng = float(md.get("lng", 0))
-                dist = _haversine(user_lat, user_lng, rlat, rlng)
-                if dist > req.radius_miles:
-                    continue
-
-                vec_id = getattr(match, "id", None) or ""
-                peak = peak_lookup.get(vec_id, {}) if vec_id else {}
-
-                r: dict[str, Any] = {
-                    "restaurant_name": md.get("restaurant_name", "Unknown"),
-                    "address": md.get("address", ""),
-                    "lat": rlat,
-                    "lng": rlng,
-                    "rating": float(md.get("rating", 0)),
-                    "closing_time": md.get("closing_time", "Unknown"),
-                    "hours_of_operation": md.get("hours_of_operation", []),
-                    "distance_miles": round(dist, 2),
-                }
-                if peak.get("peak_surplus_day"):
-                    r["peak_surplus_day"] = peak["peak_surplus_day"]
-                if peak.get("peak_surplus_kg"):
-                    try:
-                        r["peak_surplus_kg"] = float(peak["peak_surplus_kg"])
-                    except (ValueError, TypeError):
-                        pass
-
-                name = r["restaurant_name"]
-                if name not in seen:
-                    seen.add(name)
-                    restaurants.append(r)
-
-            restaurants.sort(key=lambda x: x["distance_miles"])
-        except Exception as exc:
-            logger.warning("Pinecone/OpenRouter failed, falling back to CSV: %s", exc)
-            restaurants = []
-
-    if not restaurants:
-        restaurants = _search_csv(user_lat, user_lng, req.radius_miles)
+    try:
+        restaurants = _search_supabase(user_lat, user_lng, req.radius_miles)
+    except Exception as exc:
+        logger.exception("Supabase search failed: %s", exc)
+        restaurants = []
 
     return {
         "user_location": {

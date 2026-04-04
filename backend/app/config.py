@@ -7,6 +7,8 @@ class Settings(BaseSettings):
     OPENROUTER_API_KEY: str = ""
     OPENROUTER_BASE_URL: str = "https://openrouter.ai/api/v1"
     PINECONE_API_KEY: str = ""
+    NEXT_PUBLIC_SUPABASE_URL: str = ""
+    NEXT_PUBLIC_SUPABASE_ANON_KEY: str = ""
     APP_SECRET_KEY: str = "change-me-in-production"
     FRONTEND_URL: str = "http://localhost:3000"
     BACKEND_URL: str = "http://localhost:8000"

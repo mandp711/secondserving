@@ -4,7 +4,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import get_settings
-from app.api.v1 import search, restaurants
+from app.api.v1 import search, restaurants, semantic_search
 
 settings = get_settings()
 
@@ -26,6 +26,7 @@ app.add_middleware(
 
 app.include_router(search.router, prefix="/api/v1", tags=["search"])
 app.include_router(restaurants.router, prefix="/api/v1", tags=["restaurants"])
+app.include_router(semantic_search.router, prefix="/api/v1", tags=["semantic-search"])
 
 
 @app.get("/health")
