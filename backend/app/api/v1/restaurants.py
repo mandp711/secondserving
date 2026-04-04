@@ -67,9 +67,10 @@ async def get_restaurants():
             index = pc.Index("food-rescue-menus")
 
             results = index.query(
-                vector=[0.0] * 1536,
+                vector=[0.0] * 768,
                 top_k=1000,
                 include_metadata=True,
+                namespace="san_diego",
             )
 
             for match in results.matches:

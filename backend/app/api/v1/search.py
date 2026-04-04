@@ -131,7 +131,7 @@ async def search_nearby(req: SearchRequest):
             index = pc.Index(INDEX_NAME)
 
             embedding = oai.embeddings.create(
-                input=[req.query], model="openai/text-embedding-3-small"
+                input=[req.query], model="google/gemini-embedding-001", dimensions=768
             )
             query_vec = embedding.data[0].embedding
 
@@ -150,6 +150,7 @@ async def search_nearby(req: SearchRequest):
                     ]
                 },
                 include_metadata=True,
+                namespace="san_diego",
             )
 
             peak_lookup: dict[str, dict[str, Any]] = {}
