@@ -43,6 +43,7 @@ interface Restaurant {
   closing_time: string;
   hours_of_operation: string[];
   menu_items?: string[];
+  available_items?: string[];
   cuisine?: string;
   price_level?: string;
   score?: number;
@@ -215,10 +216,11 @@ export default function MapPage() {
           const peakHtml = rest.peak_surplus_day
             ? `<p style="margin:4px 0;font-size:12px;color:#b45309;font-weight:600">Peak surplus: ${rest.peak_surplus_day}${rest.peak_surplus_kg != null ? ` (~${rest.peak_surplus_kg.toFixed(1)} kg)` : ""}</p>`
             : "";
-          const menuHtml = rest.menu_items && rest.menu_items.length > 0
-            ? `<div style="margin:6px 0 2px;padding:6px 8px;background:#ecfdf5;border-radius:6px">
-                <p style="margin:0 0 4px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#059669">Menu Items</p>
-                <div style="display:flex;flex-wrap:wrap;gap:3px">${rest.menu_items.map(i => `<span style="display:inline-block;padding:1px 6px;font-size:11px;background:#fff;border-radius:99px;color:#374151;border:1px solid #a7f3d0">${i}</span>`).join("")}</div>
+          const availItems = rest.available_items ?? rest.menu_items ?? [];
+          const menuHtml = availItems.length > 0
+            ? `<div style="margin:6px 0 2px;padding:6px 8px;background:#eff6ff;border-radius:6px">
+                <p style="margin:0 0 4px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#2563eb">Available Now (${availItems.length})</p>
+                <div style="display:flex;flex-wrap:wrap;gap:3px">${availItems.map(i => `<span style="display:inline-block;padding:1px 6px;font-size:11px;background:#fff;border-radius:99px;color:#374151;border:1px solid #bfdbfe">${i}</span>`).join("")}</div>
               </div>`
             : "";
           const dirUrl = `https://www.google.com/maps/dir/?api=1&destination=${rest.lat},${rest.lng}`;
@@ -441,10 +443,11 @@ export default function MapPage() {
 
         marker.addListener("click", () => {
           setSelectedIdx(idx);
-          const menuHtml = rest.menu_items && rest.menu_items.length > 0
-            ? `<div style="margin:6px 0 2px;padding:6px 8px;background:#ecfdf5;border-radius:6px">
-                <p style="margin:0 0 4px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#059669">Menu Items</p>
-                <div style="display:flex;flex-wrap:wrap;gap:3px">${rest.menu_items.map(i => `<span style="display:inline-block;padding:1px 6px;font-size:11px;background:#fff;border-radius:99px;color:#374151;border:1px solid #a7f3d0">${i}</span>`).join("")}</div>
+          const availItems2 = rest.available_items ?? rest.menu_items ?? [];
+          const menuHtml = availItems2.length > 0
+            ? `<div style="margin:6px 0 2px;padding:6px 8px;background:#eff6ff;border-radius:6px">
+                <p style="margin:0 0 4px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#2563eb">Available Now (${availItems2.length})</p>
+                <div style="display:flex;flex-wrap:wrap;gap:3px">${availItems2.map(i => `<span style="display:inline-block;padding:1px 6px;font-size:11px;background:#fff;border-radius:99px;color:#374151;border:1px solid #bfdbfe">${i}</span>`).join("")}</div>
               </div>`
             : "";
           const cuisineHtml = rest.cuisine
@@ -722,17 +725,17 @@ export default function MapPage() {
                           </div>
                         )}
 
-                        {rest.menu_items && rest.menu_items.length > 0 && (
-                          <div className="mt-2 rounded-md bg-emerald-50 px-3 py-2">
-                            <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-wide text-emerald-600">
+                        {(rest.available_items ?? rest.menu_items ?? []).length > 0 && (
+                          <div className="mt-2 rounded-md bg-blue-50 px-3 py-2">
+                            <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-wide text-blue-600">
                               <Utensils className="mr-1 inline h-2.5 w-2.5" />
-                              Menu Items Available
+                              Available Now ({(rest.available_items ?? rest.menu_items ?? []).length})
                             </p>
                             <div className="flex flex-wrap gap-1">
-                              {rest.menu_items.map((item, mi) => (
+                              {(rest.available_items ?? rest.menu_items ?? []).map((item, mi) => (
                                 <span
                                   key={mi}
-                                  className="inline-block rounded-full bg-white px-2 py-0.5 text-[11px] text-gray-700 shadow-sm ring-1 ring-emerald-200"
+                                  className="inline-block rounded-full bg-white px-2 py-0.5 text-[11px] text-gray-700 shadow-sm ring-1 ring-blue-200"
                                 >
                                   {item}
                                 </span>

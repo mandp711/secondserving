@@ -3,7 +3,10 @@
 Queries Supabase san_diego_restaurants and filters by distance.
 """
 
+import hashlib
 import logging
+import random
+from datetime import date
 from math import radians, cos, sin, asin, sqrt
 from typing import Any
 
@@ -12,6 +15,19 @@ from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
 from app.config import get_settings
+
+MAX_AVAILABLE = 4
+MIN_AVAILABLE = 2
+
+
+def _pick_available(items: list[str], restaurant_name: str) -> list[str]:
+    if len(items) <= MIN_AVAILABLE:
+        return items
+    seed_str = f"{restaurant_name}:{date.today().isoformat()}"
+    seed = int(hashlib.md5(seed_str.encode()).hexdigest(), 16)
+    rng = random.Random(seed)
+    k = rng.randint(MIN_AVAILABLE, min(MAX_AVAILABLE, len(items)))
+    return rng.sample(items, k)
 
 logger = logging.getLogger(__name__)
 
@@ -80,16 +96,19 @@ def _search_supabase(user_lat: float, user_lng: float, radius_miles: float) -> l
         hours_raw = row.get("hours_of_operation", "") or ""
         hours_list = [h.strip() for h in hours_raw.split("|")] if hours_raw else []
         menu_raw = row.get("menu_items", "") or ""
-        menu_list = [m.strip() for m in menu_raw.split(",") if m.strip()]
+        all_items = [m.strip() for m in menu_raw.split(",") if m.strip()]
+        rname = row.get("name", "Unknown")
+        available = _pick_available(all_items, rname)
         restaurants.append({
-            "restaurant_name": row.get("name", "Unknown"),
+            "restaurant_name": rname,
             "address": row.get("address", ""),
             "lat": rlat,
             "lng": rlng,
             "rating": float(row.get("rating") or 0),
             "closing_time": row.get("closing_time", "Unknown"),
             "hours_of_operation": hours_list,
-            "menu_items": menu_list,
+            "menu_items": all_items,
+            "available_items": available,
             "distance_miles": round(dist, 2),
         })
 
