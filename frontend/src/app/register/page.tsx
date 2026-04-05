@@ -75,7 +75,7 @@ export default function RegisterPage() {
         <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-brand-600">
           <Leaf className="h-6 w-6 text-white" />
         </div>
-        <span className="text-xl font-bold text-gray-900">SecondServing</span>
+        <span className="text-xl font-bold text-gray-900">Food Rescue</span>
       </div>
 
       <h1 className="text-2xl font-bold text-gray-900">Find Food Near You</h1>

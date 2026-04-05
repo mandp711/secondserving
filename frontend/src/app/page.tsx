@@ -33,7 +33,7 @@ export default function HomePage() {
   return (
     <div className="bg-white">
       {/* Hero */}
-      <BackgroundPaths title="Second Serving">
+      <BackgroundPaths title="Food Rescue">
         <motion.p
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}

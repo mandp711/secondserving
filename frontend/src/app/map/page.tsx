@@ -192,10 +192,9 @@ export default function MapPage() {
           const el = document.createElement("div");
           el.innerHTML = `<div style="
             background:#BC6C50;color:#fff;border-radius:50%;
-            width:36px;height:36px;display:flex;align-items:center;
-            justify-content:center;font-weight:700;font-size:14px;
+            width:14px;height:14px;
             box-shadow:0 2px 8px rgba(0,0,0,.3);border:2px solid #fff;cursor:pointer;
-          ">${idx + 1}</div>`;
+          "></div>`;
           marker = new MarkerClass({
             map: mapInstance.current!,
             position: { lat: rest.lat, lng: rest.lng },
@@ -207,7 +206,7 @@ export default function MapPage() {
             map: mapInstance.current!,
             position: { lat: rest.lat, lng: rest.lng },
             title: rest.restaurant_name,
-            label: { text: `${idx + 1}`, color: "#fff", fontWeight: "bold" },
+            icon: { url: "data:image/svg+xml;charset=UTF-8," + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"><circle cx="7" cy="7" r="6" fill="#BC6C50" stroke="#fff" stroke-width="2"/></svg>') },
           });
         }
 
@@ -421,11 +420,10 @@ export default function MapPage() {
         if (useAdvanced) {
           const el = document.createElement("div");
           el.innerHTML = `<div style="
-            background:#7c3aed;color:#fff;border-radius:50%;
-            width:36px;height:36px;display:flex;align-items:center;
-            justify-content:center;font-weight:700;font-size:14px;
+            background:#BC6C50;border-radius:50%;
+            width:14px;height:14px;
             box-shadow:0 2px 8px rgba(0,0,0,.3);border:2px solid #fff;cursor:pointer;
-          ">${idx + 1}</div>`;
+          "></div>`;
           marker = new MarkerClass({
             map: mapInstance.current!,
             position: { lat: rest.lat, lng: rest.lng },
@@ -437,7 +435,7 @@ export default function MapPage() {
             map: mapInstance.current!,
             position: { lat: rest.lat, lng: rest.lng },
             title: rest.restaurant_name,
-            label: { text: `${idx + 1}`, color: "#fff", fontWeight: "bold" },
+            icon: { url: "data:image/svg+xml;charset=UTF-8," + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"><circle cx="7" cy="7" r="6" fill="#BC6C50" stroke="#fff" stroke-width="2"/></svg>') },
           });
         }
 
@@ -451,7 +449,7 @@ export default function MapPage() {
               </div>`
             : "";
           const cuisineHtml = rest.cuisine
-            ? `<p style="margin:2px 0;font-size:11px;color:#7c3aed;font-weight:600">${rest.cuisine}${rest.price_level ? ` · ${rest.price_level}` : ""}</p>`
+            ? `<p style="margin:2px 0;font-size:11px;color:#BC6C50;font-weight:600">${rest.cuisine}${rest.price_level ? ` · ${rest.price_level}` : ""}</p>`
             : "";
           const scoreHtml = rest.score != null
             ? `<p style="margin:2px 0;font-size:10px;color:#6b7280">Match: ${Math.round(rest.score * 100)}%</p>`
@@ -541,7 +539,7 @@ export default function MapPage() {
             </button>
             <button
               onClick={() => { setSearchMode("food"); setSearched(false); setRestaurants([]); clearMarkers(); }}
-              className={`flex-1 rounded-md px-3 py-1.5 text-xs font-semibold transition-colors ${searchMode === "food" ? "text-purple-700 shadow-sm" : "text-gray-500 hover:text-gray-700"}`}
+              className={`flex-1 rounded-md px-3 py-1.5 text-xs font-semibold transition-colors ${searchMode === "food" ? "text-brand-700 shadow-sm" : "text-gray-500 hover:text-gray-700"}`}
             >
               <Utensils className="mr-1 inline h-3.5 w-3.5" />
               By Food Type
@@ -579,21 +577,21 @@ export default function MapPage() {
             <>
               <div className="flex gap-2">
                 <div className="relative flex-1">
-                  <Utensils className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-purple-400" />
+                  <Utensils className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-brand-400" />
                   <input
                     type="text"
                     placeholder="e.g. spicy tacos, sushi, Italian pasta..."
                     value={foodQuery}
                     onChange={(e) => setFoodQuery(e.target.value)}
                     onKeyDown={(e) => e.key === "Enter" && handleFoodSearch()}
-                    className="w-full rounded-lg border border-purple-300 py-2.5 pl-10 pr-3 text-sm text-gray-900 placeholder-gray-400 focus:border-purple-500 focus:outline-none focus:ring-1 focus:ring-purple-500"
+                    className="w-full rounded-lg border border-brand-300 py-2.5 pl-10 pr-3 text-sm text-gray-900 placeholder-gray-400 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
                   />
                 </div>
                 <Button
                   onClick={handleFoodSearch}
                   isLoading={loading}
                   disabled={loading}
-                  className="bg-purple-600 hover:bg-purple-700"
+                  className="bg-brand-600 hover:bg-brand-700"
                 >
                   Search
                 </Button>
@@ -636,7 +634,7 @@ export default function MapPage() {
                   {searchMode === "food" ? (
                     <>
                       {restaurants.length} restaurants matching{" "}
-                      <span className="font-semibold text-purple-700">&ldquo;{locLabel}&rdquo;</span>
+                      <span className="font-semibold text-brand-700">&ldquo;{locLabel}&rdquo;</span>
                     </>
                   ) : (
                     <>
@@ -668,17 +666,19 @@ export default function MapPage() {
                     }}
                   >
                     <div className="flex items-start gap-3">
-                      <div className={`flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full text-sm font-bold text-white ${searchMode === "food" ? "bg-purple-600" : "bg-brand-600"}`}>
-                        {idx + 1}
-                      </div>
+                      {searchMode === "food" && (
+                        <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-aqua-dark text-sm font-bold text-white">
+                          {idx + 1}
+                        </div>
+                      )}
                       <div className="min-w-0 flex-1">
-                        <h3 className="truncate text-sm font-semibold text-gray-900">
+                        <h3 className="truncate text-sm font-semibold text-brand-600">
                           {rest.restaurant_name}
                         </h3>
                         <p className="mt-0.5 truncate text-xs text-gray-500">{rest.address}</p>
 
                         {rest.cuisine && (
-                          <p className="mt-1 text-xs font-medium text-purple-600">
+                          <p className="mt-1 text-xs font-medium text-brand-600">
                             {rest.cuisine}{rest.price_level ? ` · ${rest.price_level}` : ""}
                           </p>
                         )}
@@ -691,7 +691,7 @@ export default function MapPage() {
                             </span>
                           )}
                           {rest.score != null && rest.score > 0 && (
-                            <span className="flex items-center gap-1 font-medium text-purple-600">
+                            <span className="flex items-center gap-1 font-medium text-aqua-dark">
                               <Search className="h-3 w-3" />
                               {Math.round(rest.score * 100)}% match
                             </span>
@@ -756,7 +756,7 @@ export default function MapPage() {
               {searchMode === "food" ? (
                 <>
                   <div className="rounded-full p-4">
-                    <Utensils className="h-8 w-8 text-purple-600" />
+                    <Utensils className="h-8 w-8 text-brand-600" />
                   </div>
                   <p className="text-sm font-medium text-gray-700">
                     Search by food type or cuisine
