@@ -149,9 +149,9 @@ export default function MapPage() {
         map: mapInstance.current,
         center,
         radius: 5 * 1609.34, // 5 miles in meters
-        fillColor: "#16a34a",
+        fillColor: "#BC6C50",
         fillOpacity: 0.06,
-        strokeColor: "#16a34a",
+        strokeColor: "#BC6C50",
         strokeOpacity: 0.3,
         strokeWeight: 2,
       });
@@ -191,7 +191,7 @@ export default function MapPage() {
         if (useAdvanced) {
           const el = document.createElement("div");
           el.innerHTML = `<div style="
-            background:#16a34a;color:#fff;border-radius:50%;
+            background:#BC6C50;color:#fff;border-radius:50%;
             width:36px;height:36px;display:flex;align-items:center;
             justify-content:center;font-weight:700;font-size:14px;
             box-shadow:0 2px 8px rgba(0,0,0,.3);border:2px solid #fff;cursor:pointer;
@@ -227,12 +227,12 @@ export default function MapPage() {
           const closed = shouldShowAsClosed(rest.closing_time);
           const closesHtml = closed
             ? '<p style="margin:4px 0;font-size:12px;color:#dc2626;font-weight:600">Closed</p>'
-            : `<p style="margin:4px 0;font-size:12px;color:#16a34a;font-weight:600">Closes: ${rest.closing_time}</p>`;
+            : `<p style="margin:4px 0;font-size:12px;color:#BC6C50;font-weight:600">Closes: ${rest.closing_time}</p>`;
           infoRef.current?.setContent(`
             <div style="padding:8px;max-width:280px">
               <strong style="font-size:14px">${rest.restaurant_name}</strong>
               <p style="margin:4px 0;font-size:12px;color:#666">
-                <a href="${dirUrl}" target="_blank" rel="noopener noreferrer" style="color:#16a34a;text-decoration:underline;cursor:pointer">${rest.address}</a>
+                <a href="${dirUrl}" target="_blank" rel="noopener noreferrer" style="color:#BC6C50;text-decoration:underline;cursor:pointer">${rest.address}</a>
               </p>
               ${closesHtml}
               ${peakHtml}
@@ -310,12 +310,12 @@ export default function MapPage() {
               const closed = shouldShowAsClosed(rest.closing_time);
               const closesHtml = closed
                 ? '<p style="margin:4px 0;font-size:12px;color:#dc2626;font-weight:600">Closed</p>'
-                : `<p style="margin:4px 0;font-size:12px;color:#16a34a;font-weight:600">Closes: ${rest.closing_time}</p>`;
+                : `<p style="margin:4px 0;font-size:12px;color:#BC6C50;font-weight:600">Closes: ${rest.closing_time}</p>`;
               infoRef.current.setContent(`
                 <div style="padding:8px;max-width:260px">
                   <strong style="font-size:14px">${rest.restaurant_name}</strong>
                   <p style="margin:4px 0;font-size:12px;color:#666">
-                    <a href="${dirUrl}" target="_blank" rel="noopener noreferrer" style="color:#16a34a;text-decoration:underline;cursor:pointer">${rest.address}</a>
+                    <a href="${dirUrl}" target="_blank" rel="noopener noreferrer" style="color:#BC6C50;text-decoration:underline;cursor:pointer">${rest.address}</a>
                   </p>
                   ${closesHtml}
                   ${peakHtml}
@@ -460,13 +460,13 @@ export default function MapPage() {
           const closed = shouldShowAsClosed(rest.closing_time);
           const closesHtml = closed
             ? '<p style="margin:4px 0;font-size:12px;color:#dc2626;font-weight:600">Closed</p>'
-            : `<p style="margin:4px 0;font-size:12px;color:#16a34a;font-weight:600">Closes: ${rest.closing_time}</p>`;
+            : `<p style="margin:4px 0;font-size:12px;color:#BC6C50;font-weight:600">Closes: ${rest.closing_time}</p>`;
           infoRef.current?.setContent(`
             <div style="padding:8px;max-width:280px">
               <strong style="font-size:14px">${rest.restaurant_name}</strong>
               ${cuisineHtml}
               <p style="margin:4px 0;font-size:12px;color:#666">
-                <a href="${dirUrl}" target="_blank" rel="noopener noreferrer" style="color:#16a34a;text-decoration:underline;cursor:pointer">${rest.address}</a>
+                <a href="${dirUrl}" target="_blank" rel="noopener noreferrer" style="color:#BC6C50;text-decoration:underline;cursor:pointer">${rest.address}</a>
               </p>
               ${closesHtml}
               ${menuHtml}
@@ -527,21 +527,21 @@ export default function MapPage() {
 
   return (
     <AuthGuard>
-    <div className="flex h-[calc(100vh-4rem)] flex-col lg:flex-row">
+    <div className="flex h-[calc(100vh-4rem)] flex-col bg-gradient-to-b from-brand-50 via-aqua-light to-[#AFE0E7]/40 lg:flex-row">
       {/* Sidebar */}
-      <div className="flex w-full flex-col border-r border-gray-200 bg-white lg:w-[420px]">
+      <div className="flex w-full flex-col border-r border-gray-200 lg:w-[420px]">
         <div className="border-b border-gray-200 p-4">
-          <div className="mb-3 flex rounded-lg bg-gray-100 p-0.5">
+          <div className="mb-3 flex rounded-lg p-0.5">
             <button
               onClick={() => { setSearchMode("location"); setSearched(false); setRestaurants([]); clearMarkers(); }}
-              className={`flex-1 rounded-md px-3 py-1.5 text-xs font-semibold transition-colors ${searchMode === "location" ? "bg-white text-gray-900 shadow-sm" : "text-gray-500 hover:text-gray-700"}`}
+              className={`flex-1 rounded-md px-3 py-1.5 text-xs font-semibold transition-colors ${searchMode === "location" ? "text-gray-900 shadow-sm" : "text-gray-500 hover:text-gray-700"}`}
             >
               <MapPin className="mr-1 inline h-3.5 w-3.5" />
               By Location
             </button>
             <button
               onClick={() => { setSearchMode("food"); setSearched(false); setRestaurants([]); clearMarkers(); }}
-              className={`flex-1 rounded-md px-3 py-1.5 text-xs font-semibold transition-colors ${searchMode === "food" ? "bg-white text-purple-700 shadow-sm" : "text-gray-500 hover:text-gray-700"}`}
+              className={`flex-1 rounded-md px-3 py-1.5 text-xs font-semibold transition-colors ${searchMode === "food" ? "text-purple-700 shadow-sm" : "text-gray-500 hover:text-gray-700"}`}
             >
               <Utensils className="mr-1 inline h-3.5 w-3.5" />
               By Food Type
@@ -614,7 +614,7 @@ export default function MapPage() {
           )}
 
           {error && (
-            <div className="m-4 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700">{error}</div>
+            <div className="m-4 rounded-lg border border-red-200 p-4 text-sm text-red-700">{error}</div>
           )}
 
           {!loading && searched && restaurants.length === 0 && !error && (
@@ -631,7 +631,7 @@ export default function MapPage() {
 
           {!loading && restaurants.length > 0 && (
             <>
-              <div className="border-b border-gray-100 bg-gray-50 px-4 py-2.5">
+              <div className="border-b border-gray-100 px-4 py-2.5">
                 <p className="text-xs font-medium text-gray-500">
                   {searchMode === "food" ? (
                     <>
@@ -652,7 +652,7 @@ export default function MapPage() {
                   <div
                     key={idx}
                     id={`rest-${idx}`}
-                    className={`cursor-pointer p-4 transition-colors ${selectedIdx === idx ? "bg-brand-50" : "hover:bg-gray-50"}`}
+                    className={`cursor-pointer p-4 transition-colors ${selectedIdx === idx ? "bg-white/40" : "hover:bg-white/20"}`}
                     onClick={() => {
                       setSelectedIdx(idx);
                       const markerOffset = searchMode === "food" ? idx : idx + 1;
@@ -696,7 +696,7 @@ export default function MapPage() {
                               {Math.round(rest.score * 100)}% match
                             </span>
                           )}
-                          <span className={`flex items-center gap-1 font-medium ${shouldShowAsClosed(rest.closing_time) ? "text-red-600" : "text-brand-600"}`}>
+                          <span className={`flex items-center gap-1 font-medium ${shouldShowAsClosed(rest.closing_time) ? "text-red-600" : "text-teal"}`}>
                             <Clock className="h-3 w-3" />
                             {shouldShowAsClosed(rest.closing_time) ? "Closed" : `Closes ${rest.closing_time}`}
                           </span>
@@ -713,7 +713,7 @@ export default function MapPage() {
                         )}
 
                         {rest.hours_of_operation.length > 0 && (
-                          <div className="mt-2 rounded-md bg-gray-50 px-3 py-2">
+                          <div className="mt-2 rounded-md px-3 py-2">
                             <p className="mb-1 text-[10px] font-semibold uppercase tracking-wide text-gray-400">
                               Hours of Operation
                             </p>
@@ -725,9 +725,9 @@ export default function MapPage() {
                           </div>
                         )}
 
-                        {(rest.available_items ?? rest.menu_items ?? []).length > 0 && (
-                          <div className="mt-2 rounded-md bg-blue-50 px-3 py-2">
-                            <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-wide text-blue-600">
+                        {rest.menu_items && rest.menu_items.length > 0 && (
+                          <div className="mt-2 rounded-md px-3 py-2">
+                            <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-wide text-teal">
                               <Utensils className="mr-1 inline h-2.5 w-2.5" />
                               Available Now ({(rest.available_items ?? rest.menu_items ?? []).length})
                             </p>
@@ -735,7 +735,7 @@ export default function MapPage() {
                               {(rest.available_items ?? rest.menu_items ?? []).map((item, mi) => (
                                 <span
                                   key={mi}
-                                  className="inline-block rounded-full bg-white px-2 py-0.5 text-[11px] text-gray-700 shadow-sm ring-1 ring-blue-200"
+                                  className="inline-block rounded-full px-2 py-0.5 text-[11px] text-gray-700 ring-1 ring-aqua-dark"
                                 >
                                   {item}
                                 </span>
@@ -755,7 +755,7 @@ export default function MapPage() {
             <div className="flex flex-col items-center justify-center gap-2 py-20 text-center">
               {searchMode === "food" ? (
                 <>
-                  <div className="rounded-full bg-purple-50 p-4">
+                  <div className="rounded-full p-4">
                     <Utensils className="h-8 w-8 text-purple-600" />
                   </div>
                   <p className="text-sm font-medium text-gray-700">
@@ -767,8 +767,8 @@ export default function MapPage() {
                 </>
               ) : (
                 <>
-                  <div className="rounded-full bg-brand-50 p-4">
-                    <MapPin className="h-8 w-8 text-brand-600" />
+                  <div className="rounded-full p-4">
+                    <MapPin className="h-8 w-8 text-teal" />
                   </div>
                   <p className="text-sm font-medium text-gray-700">
                     Enter your address to find restaurants nearby
@@ -787,7 +787,7 @@ export default function MapPage() {
       <div className="relative flex-1">
         <div ref={mapRef} className="h-full w-full" />
         {!mapReady && (
-          <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-green-50 via-blue-50 to-emerald-50">
+          <div className="absolute inset-0 flex items-center justify-center">
             <div className="text-center">
               <MapPin className="mx-auto mb-2 h-10 w-10 text-gray-300" />
               <p className="text-sm text-gray-500">Loading map...</p>

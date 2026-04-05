@@ -21,7 +21,7 @@ interface Restaurant {
   peak_surplus_kg?: number;
 }
 
-const CARD_TOP_BG = "bg-brand-700";
+const CARD_TOP_BG = "bg-teal";
 
 function isRestaurantClosed(closing_time: string): boolean {
   if (!closing_time || closing_time === "Unknown") return false;
@@ -57,7 +57,7 @@ export default function ListingsPage() {
       <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
         <div className="mb-10 flex items-center justify-between">
           <div>
-            <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-brand-100 px-3 py-1 text-xs font-medium text-brand-700">
+            <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-aqua px-3 py-1 text-xs font-medium text-teal">
               <UtensilsCrossed className="h-3 w-3" />
               {restaurants.length} restaurants available
             </div>
@@ -73,7 +73,7 @@ export default function ListingsPage() {
 
         {loading ? (
           <div className="mt-20 flex flex-col items-center justify-center gap-3">
-            <div className="h-10 w-10 animate-spin rounded-full border-4 border-emerald-500 border-t-transparent" />
+            <div className="h-10 w-10 animate-spin rounded-full border-4 border-brand-500 border-t-transparent" />
             <p className="text-gray-500">Loading restaurants...</p>
           </div>
         ) : (
@@ -99,7 +99,7 @@ export default function ListingsPage() {
 
                   <div className="flex flex-1 flex-col gap-4 p-5">
                     <p className="flex items-start gap-1.5 text-sm text-gray-500">
-                      <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-emerald-500" />
+                      <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-brand-500" />
                       {r.address}
                     </p>
 
@@ -109,9 +109,9 @@ export default function ListingsPage() {
                         <span className="text-sm font-medium text-red-600">Closed</span>
                       </div>
                     ) : (
-                      <div className="flex items-center gap-2 rounded-xl bg-emerald-50 px-4 py-2.5">
-                        <Clock className="h-4 w-4 text-emerald-600" />
-                        <span className="text-sm font-medium text-emerald-700">
+                      <div className="flex items-center gap-2 rounded-xl bg-aqua-light px-4 py-2.5">
+                        <Clock className="h-4 w-4 text-teal" />
+                        <span className="text-sm font-medium text-teal">
                           Closes at {r.closing_time}
                         </span>
                       </div>

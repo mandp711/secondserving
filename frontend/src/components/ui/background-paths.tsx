@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 
-function FloatingPaths({ position }: { position: number }) {
+export function FloatingPaths({ position }: { position: number }) {
   const paths = Array.from({ length: 36 }, (_, i) => ({
     id: i,
     d: `M-${380 - i * 5 * position} -${189 + i * 6}C-${
@@ -12,14 +12,14 @@ function FloatingPaths({ position }: { position: number }) {
     } ${343 - i * 6}C${616 - i * 5 * position} ${470 - i * 6} ${
       684 - i * 5 * position
     } ${875 - i * 6} ${684 - i * 5 * position} ${875 - i * 6}`,
-    color: `rgba(22,163,74,${0.08 + i * 0.025})`,
+    color: `rgba(188,108,80,${0.08 + i * 0.025})`,
     width: 0.5 + i * 0.03,
   }));
 
   return (
     <div className="absolute inset-0 pointer-events-none">
       <svg
-        className="w-full h-full text-green-700"
+        className="w-full h-full text-brand-500"
         viewBox="0 0 696 316"
         fill="none"
       >
@@ -51,19 +51,17 @@ function FloatingPaths({ position }: { position: number }) {
 
 export function BackgroundPaths({
   title = "Background Paths",
+  bare = false,
   children,
 }: {
   title?: string;
+  bare?: boolean;
   children?: React.ReactNode;
 }) {
   const words = title.split(" ");
 
   return (
-    <div className="relative min-h-screen w-full flex items-center justify-center overflow-hidden bg-white">
-      <div className="absolute inset-0">
-        <FloatingPaths position={1} />
-        <FloatingPaths position={-1} />
-      </div>
+    <div className="relative min-h-screen w-full flex items-center justify-center">
 
       <div className="relative z-10 container mx-auto px-4 md:px-6 text-center">
         <motion.div
@@ -86,7 +84,7 @@ export function BackgroundPaths({
                       stiffness: 150,
                       damping: 25,
                     }}
-                    className="inline-block text-transparent bg-clip-text bg-gradient-to-r from-green-800 to-green-600/80"
+                    className="inline-block text-transparent bg-clip-text bg-gradient-to-r from-[#304C53] to-[#BC6C50]"
                   >
                     {letter}
                   </motion.span>

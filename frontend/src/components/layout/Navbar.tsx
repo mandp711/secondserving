@@ -29,11 +29,11 @@ export function Navbar() {
   }
 
   return (
-    <nav className="sticky top-0 z-50 border-b border-gray-200 bg-white/80 backdrop-blur-md">
+    <nav className="sticky top-0 z-50 border-b border-white bg-white/80 backdrop-blur-md">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
-            <span className="text-xl font-bold text-gray-900">SecondServing</span>
+            <span className="text-xl font-bold text-brand-800">SecondServing</span>
           </Link>
 
           <div className="hidden items-center gap-1 md:flex">
@@ -47,8 +47,8 @@ export function Navbar() {
                   className={clsx(
                     "flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
                     isActive
-                      ? "bg-brand-50 text-brand-700"
-                      : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+                      ? "bg-aqua-dark text-teal"
+                      : "text-teal hover:bg-aqua-dark hover:text-teal"
                   )}
                 >
                   <Icon className="h-4 w-4" />
@@ -61,27 +61,27 @@ export function Navbar() {
           <div className="hidden items-center gap-3 md:flex">
             {isAuthenticated ? (
               <>
-                <span className="text-sm text-gray-600">
+                <span className="text-sm text-teal">
                   Hi, {user?.name || "User"}
                 </span>
-                <Button variant="outline" size="sm" onClick={handleSignOut}>
+                <Button variant="outline" size="sm" onClick={handleSignOut} className="border-teal text-teal hover:bg-aqua-dark">
                   Sign Out
                 </Button>
               </>
             ) : (
               <>
                 <Link href="/login">
-                  <Button variant="outline" size="sm">Sign In</Button>
+                  <Button variant="outline" size="sm" className="bg-aqua text-brand-800 border-aqua hover:bg-aqua-dark">Sign In</Button>
                 </Link>
                 <Link href="/register">
-                  <Button size="sm">Get Started</Button>
+                  <Button size="sm" className="bg-brand-800 text-white hover:bg-brand-900">Get Started</Button>
                 </Link>
               </>
             )}
           </div>
 
           <button
-            className="rounded-lg p-2 text-gray-600 hover:bg-gray-100 md:hidden"
+            className="rounded-lg p-2 text-teal hover:bg-aqua-dark md:hidden"
             onClick={() => setMobileOpen(!mobileOpen)}
             aria-label="Toggle menu"
           >
@@ -91,7 +91,7 @@ export function Navbar() {
       </div>
 
       {mobileOpen && (
-        <div className="border-t border-gray-200 bg-white px-4 pb-4 pt-2 md:hidden">
+        <div className="border-t border-aqua bg-aqua px-4 pb-4 pt-2 md:hidden">
           <div className="space-y-1">
             {navLinks.map((link) => {
               const Icon = link.icon;
@@ -103,7 +103,7 @@ export function Navbar() {
                   onClick={() => setMobileOpen(false)}
                   className={clsx(
                     "flex items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
-                    isActive ? "bg-brand-50 text-brand-700" : "text-gray-600 hover:bg-gray-100"
+                    isActive ? "bg-aqua-dark text-teal" : "text-teal hover:bg-aqua-dark"
                   )}
                 >
                   <Icon className="h-4 w-4" />
@@ -112,16 +112,16 @@ export function Navbar() {
               );
             })}
           </div>
-          <div className="mt-3 flex flex-col gap-2 border-t border-gray-200 pt-3">
+          <div className="mt-3 flex flex-col gap-2 border-t border-aqua-dark pt-3">
             {isAuthenticated ? (
-              <Button variant="outline" size="sm" onClick={handleSignOut}>Sign Out</Button>
+              <Button variant="outline" size="sm" onClick={handleSignOut} className="border-teal text-teal hover:bg-aqua-dark">Sign Out</Button>
             ) : (
               <>
                 <Link href="/login" onClick={() => setMobileOpen(false)}>
-                  <Button variant="outline" size="sm" className="w-full">Sign In</Button>
+                  <Button variant="outline" size="sm" className="w-full bg-aqua text-brand-800 border-aqua hover:bg-aqua-dark">Sign In</Button>
                 </Link>
                 <Link href="/register" onClick={() => setMobileOpen(false)}>
-                  <Button size="sm" className="w-full">Get Started</Button>
+                  <Button size="sm" className="w-full bg-brand-800 text-white hover:bg-brand-900">Get Started</Button>
                 </Link>
               </>
             )}

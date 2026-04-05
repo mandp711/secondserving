@@ -3,7 +3,7 @@
 import { BarChart3, TrendingUp, Package, Users } from "lucide-react";
 
 const summaryCards = [
-  { label: "Items Saved", value: "156", icon: Package, color: "text-brand-600 bg-brand-50" },
+  { label: "Items Saved", value: "156", icon: Package, color: "text-teal bg-aqua-light" },
   { label: "Claims Made", value: "89", icon: Users, color: "text-blue-600 bg-blue-50" },
   { label: "Waste Reduced", value: "240 lbs", icon: TrendingUp, color: "text-amber-600 bg-amber-50" },
   { label: "Active Listings", value: "12", icon: BarChart3, color: "text-purple-600 bg-purple-50" },
